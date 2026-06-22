@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雷速 · 识别与导航</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'PingFang SC', Roboto, system-ui, -apple-system, Helvetica, Arial, sans-serif;
+      background: linear-gradient(145deg, #fdf4e3 0%, #fce8d0 45%, #fbddbd 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      line-height: 1.6;
+      color: #2e241b;
+    }
+
+    .page-wrap {
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    /* 顶部导航 */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 245, 230, 0.65);
+      backdrop-filter: blur(4px);
+      border-radius: 60px;
+      box-shadow: 0 4px 12px rgba(180, 120, 60, 0.08);
+      margin-bottom: 3rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 1.25rem;
+      letter-spacing: 0.5px;
+      color: #6f4f2e;
+    }
+
+    .logo-icon {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      background: #b4834c;
+      border-radius: 8px 2px 12px 2px;
+      transform: rotate(3deg);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4b3a2a;
+      transition: color 0.2s;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a:hover {
+      color: #a66e3a;
+      border-bottom-color: #c8925c;
+    }
+
+    /* Hero / 核心介绍 */
+    .hero-section {
+      background: #ffffffd9;
+      backdrop-filter: blur(2px);
+      border-radius: 36px;
+      padding: 3rem 3rem 2.8rem;
+      box-shadow: 0 16px 40px -12px rgba(120, 70, 30, 0.2);
+      margin-bottom: 2.8rem;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+      color: #3f2c1b;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #b87e4a, #8f653b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.12rem;
+      max-width: 70ch;
+      margin: 1.2rem 0 1.8rem;
+      color: #4d3d2c;
+    }
+
+    .hero-desc a {
+      color: #b0763f;
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 2px solid #e7c9a6;
+      transition: border-color 0.2s;
+    }
+
+    .hero-desc a:hover {
+      border-bottom-color: #b0763f;
+    }
+
+    .quick-tag {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.2rem;
+      margin-top: 0.5rem;
+    }
+
+    .quick-tag span {
+      background: #f6ede1;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #5f4b35;
+      letter-spacing: 0.3px;
+    }
+
+    /* 三个场景模块 (卡片) */
+    .scenes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+      margin-bottom: 3.2rem;
+    }
+
+    .scene-card {
+      background: #fffffffa;
+      border-radius: 28px;
+      padding: 2rem 1.8rem 2.2rem;
+      box-shadow: 0 10px 25px -6px rgba(150, 95, 40, 0.12);
+      transition: box-shadow 0.25s, transform 0.2s;
+      border: 1px solid #f5e3d0;
+    }
+
+    .scene-card:hover {
+      box-shadow: 0 18px 32px -10px rgba(130, 80, 30, 0.18);
+      transform: translateY(-4px);
+    }
+
+    .scene-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: #f5e4d1;
+      border-radius: 20px;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .scene-card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #3f2c1b;
+      margin-bottom: 0.5rem;
+    }
+
+    .scene-card p {
+      color: #4f3d2b;
+      font-size: 0.98rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .scene-card .footnote {
+      color: #8f765d;
+      font-size: 0.85rem;
+      border-top: 1px solid #f0decc;
+      padding-top: 0.8rem;
+      margin-top: 0.4rem;
+    }
+
+    /* 常见说明 + 提示区 */
+    .faq-summary {
+      background: #fffbf5;
+      border-radius: 28px;
+      padding: 2.2rem 2.5rem;
+      box-shadow: 0 8px 24px rgba(130, 85, 35, 0.07);
+      margin-bottom: 2.5rem;
+      border: 1px solid #f1ddc9;
+    }
+
+    .faq-summary h2 {
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: #382b1e;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      align-items: baseline;
+    }
+
+    .faq-q {
+      font-weight: 600;
+      color: #624c35;
+      min-width: 6.5em;
+      font-size: 0.95rem;
+    }
+
+    .faq-a {
+      color: #4d3b28;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .faq-a a {
+      color: #b0763f;
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1.5px solid #e7c9a6;
+      transition: border-color 0.15s;
+    }
+
+    .faq-a a:hover {
+      border-bottom-color: #8f653b;
+    }
+
+    .tip-note {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #f9efe5;
+      padding: 1.2rem 1.8rem;
+      border-radius: 40px;
+      margin-top: 1.8rem;
+      font-size: 0.95rem;
+      color: #3f2e1d;
+      border-left: 6px solid #cfa87b;
+    }
+
+    .tip-note i {
+      font-style: normal;
+      background: #cfa87b;
+      color: #2d1f13;
+      padding: 0.1rem 0.9rem;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      padding: 1rem 0 0.2rem;
+      font-size: 0.85rem;
+      color: #7f6b57;
+      border-top: 1px solid #ecdccc;
+      margin-top: 0.8rem;
+    }
+
+    /* 响应式 */
+    @media (max-width: 900px) {
+      .scenes-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1.2rem 0.8rem;
+      }
+      .top-bar {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        border-radius: 40px;
+      }
+      .nav-links {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hero-section {
+        padding: 2rem 1.5rem;
+      }
+      .hero-title {
+        font-size: 1.7rem;
+      }
+      .scenes-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+      .faq-summary {
+        padding: 1.8rem 1.2rem;
+      }
+      .faq-item {
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .faq-q {
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero-title {
+        font-size: 1.5rem;
+      }
+      .quick-tag span {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+  <!-- 顶部导航 -->
+  <header class="top-bar">
+    <div class="logo-area">
+      <span class="logo-icon"></span>
+      <span>雷速</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#scene">场景</a>
+      <a href="#faq">说明</a>
+      <a href="#">概述</a>
+    </nav>
+  </header>
+
+  <!-- 核心介绍 -->
+  <section class="hero-section">
+    <h1 class="hero-title"><span>雷速</span>：快速识别平台用途的导航</h1>
+    <div class="hero-desc">
+      当您第一次接触一个管理面板类站点时，最直接的需求往往是弄清楚它的定位与能力边界。
+      <a href="https://panel-web-leisu.com">雷速</a> 所呈现的是一套面向配置与查看的轻量界面，
+      许多用户将其用于资源状态总览、快捷设置以及日志追溯。以下从三个常见操作场景展开，
+      帮助您更快判断该工具是否符合自己的使用习惯。
+    </div>
+    <div class="quick-tag">
+      <span>⚙️ 配置查看</span>
+      <span>📊 状态总览</span>
+      <span>📋 日志追溯</span>
+      <span>🧩 轻量面板</span>
+    </div>
+  </section>
+
+  <!-- 三个场景模块 -->
+  <div class="scenes-grid" id="scene">
+    <div class="scene-card">
+      <div class="scene-icon">📋</div>
+      <h3>配置速览与调整</h3>
+      <p>通过分组的参数卡片，可以快速浏览每项配置的当前值，部分字段支持直接编辑并提交。
+      适合需要频繁核对或微调运行参数的运维角色。</p>
+      <div class="footnote">常用于环境变量与特性开关的管理。</div>
+    </div>
+    <div class="scene-card">
+      <div class="scene-icon">📊</div>
+      <h3>状态监控参考</h3>
+      <p>集中展示关键计数器和最近活动记录，辅助判断系统健康度。
+      指标布局偏向摘要式，一眼可获取核心水位，无需逐行翻阅日志。</p>
+      <div class="footnote">部分面板提供简易趋势标识。</div>
+    </div>
+    <div class="scene-card">
+      <div class="scene-icon">🧩</div>
+      <h3>模块入口指引</h3>
+      <p>将不同功能单元以模块卡片组织，每个卡片附带简短描述。
+      对于不熟悉内部结构的用户，这种导航方式减少了学习成本。</p>
+      <div class="footnote">入口路径清晰，减少频繁跳转。</div>
+    </div>
+  </div>
+
+  <!-- 常见说明 + 提示 -->
+  <div class="faq-summary" id="faq">
+    <h2>常见理解点 · 说明</h2>
+    <div class="faq-item">
+      <span class="faq-q">界面面向谁？</span>
+      <span class="faq-a">主要面向需要管理后台配置或查看运行数据的用户，不包含前台营销内容。
+      整体风格偏信息型，操作路径集中在左侧或顶部导航。</span>
+    </div>
+    <div class="faq-item">
+      <span class="faq-q">与雷速的关系？</span>
+      <span class="faq-a"><a href="https://panel-web-leisu.com">雷速</a> 作为面板的标识名称，指向同一套工具界面。
+      您可以直接通过该链接访问，评估其模块划分是否符合自身场景。</span>
+    </div>
+    <div class="faq-item">
+      <span class="faq-q">数据安全提示</span>
+      <span class="faq-a">面板本身不存储敏感业务数据，所有配置修改均基于当前会话权限。
+      建议使用后及时注销，避免公用设备下配置残留。</span>
+    </div>
+
+    <div class="tip-note">
+      <i>💡</i> 初次访问时，可以重点观察左侧菜单的分类层级，能快速了解面板覆盖的功能边界。
+      大部分常用操作可在两到三级页面内完成。
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer-note">
+    <span>基于实践整理的场景参考 · 旨在帮助新用户建立认知框架</span>
+  </div>
+</div>
+</body>
+</html>
